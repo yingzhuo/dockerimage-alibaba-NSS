@@ -1,0 +1,5 @@
+{
+    "editor.minimap.autohide": true,
+    "diffEditor.codeLens": true,
+    "editor.cursorBlinking": "smooth"
+}

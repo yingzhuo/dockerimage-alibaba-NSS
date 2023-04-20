@@ -1,0 +1,98 @@
+version: "3.9"
+
+services:
+
+  mysql:
+    image: "yingzhuo/mysql-nss:8.0.23"
+    container_name: "Alibaba-NSS-mysql"
+    restart: "always"
+    command:
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
+      - "--default-authentication-plugin=mysql_native_password"
+    environment:
+      - "MYSQL_ROOT_PASSWORD=root"
+    ports:
+      - "3306:3306"
+    volumes:
+      - "${PWD}/.dockervolume-mysql/:/var/lib/mysql"
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      start_period: 12s
+      interval: 5s
+      timeout: 10s
+      retries: 10
+
+  nacos:
+    image: "yingzhuo/nacos:v2.2.1"
+    container_name: "Alibaba-NSS-nacos"
+    restart: "always"
+    environment:
+      - "MODE=standalone"
+      - "NACOS_AUTH_TOKEN=VGhpc0lzTXlDdXN0b21TZWNyZXRLZXkwMTIzNDU2Nzg="
+      - "NACOS_AUTH_IDENTITY_KEY=nacosServerIdentity"
+      - "NACOS_AUTH_IDENTITY_VALUE=NSS-rocks"
+      - "SPRING_DATASOURCE_PLATFORM=mysql"
+      - "MYSQL_SERVICE_HOST=mysql"
+      - "MYSQL_SERVICE_DB_NAME=nacos"
+      - "MYSQL_SERVICE_PORT=3306"
+      - "MYSQL_SERVICE_USER=root"
+      - "MYSQL_SERVICE_PASSWORD=root"
+      - "MYSQL_SERVICE_DB_PARAM=characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true"
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    healthcheck:
+      test: [ "CMD", "curl", "-XGET", "localhost:8848/nacos" ]
+      start_period: 12s
+      interval: 5s
+      timeout: 10s
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  sentinel:
+    image: "yingzhuo/sentinel:v1.8.6"
+    container_name: "Alibaba-NSS-sentinel"
+    restart: "always"
+    environment:
+      - "SERVER_PORT:8080"
+    ports:
+      - "7777:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "-XGET", "localhost:8080" ]
+      start_period: 8s
+      interval: 5s
+      timeout: 10s
+    depends_on:
+      nacos:
+        condition: service_healthy
+
+  seata:
+    image: "yingzhuo/seata:v1.6.1"
+    container_name: "Alibaba-NSS-seata"
+    restart: "always"
+    environment:
+      - "SEATA_IP=10.211.55.2"
+      - "SEATA_PORT=8091"
+      - "MYSQL_SERVICE_HOST=mysql"
+      - "MYSQL_SERVICE_PORT=3306"
+      - "MYSQL_SERVICE_DB_NAME=seata"
+      - "MYSQL_SERVICE_DB_PARAM=rewriteBatchedStatements=true"
+      - "MYSQL_SERVICE_USERNAME=root"
+      - "MYSQL_SERVICE_PASSWORD=root"
+      - "NACOS_SERVICE_HOST=nacos"
+      - "NACOS_SERVICE_PORT=8848"
+      - "NACOS_SERVICE_NAMESPACE="
+      - "LOGGING_CONFIG=/seata-server/resources/logback-simple.xml"
+    ports:
+      - "7091:7091"
+      - "8091:8091"
+    healthcheck:
+      test: [ "CMD", "curl", "-XGET", "localhost:7091" ]
+      start_period: 10s
+      interval: 5s
+      timeout: 10s
+    depends_on:
+      nacos:
+        condition: service_healthy
