@@ -9,7 +9,7 @@
 |====
 | 服务 | 版本 | 端口 (宿主) | 口令:密码 | 说明
 
-| MySQL | 8.0.32 | 3306 | root:root | 支持架构: linux/amd64,linux/arm64
+| MySQL | 8.0.33 | 3306 | root:root | 支持架构: linux/amd64,linux/arm64
 | Nacos | 2.2.1 | 8848 | nacos:nacos | 支持架构: linux/amd64,linux/arm64
 | Sentinel | 1.8.6 | 7777 | sentinel:sentinel | 支持架构: linux/amd64,linux/arm64
 | Seata | 1.6.1 | 7091 | seata:seata | 支持架构: linux/amd64,linux/arm64

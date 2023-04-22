@@ -13,7 +13,7 @@ login:
 
 build-mysql:
 	@docker buildx create --use
-	@docker buildx build --push --platform linux/amd64,linux/arm64 -t yingzhuo/mysql-nss:8.0.23 $(CURDIR)/dockercontext-mysql/
+	@docker buildx build --push --platform linux/amd64,linux/arm64 -t yingzhuo/mysql-nss:8.0.33 $(CURDIR)/dockercontext-mysql/
 
 build-nacos:
 	@docker buildx create --use
