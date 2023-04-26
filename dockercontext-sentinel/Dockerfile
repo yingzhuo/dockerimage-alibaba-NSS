@@ -1,5 +1,7 @@
 FROM yingzhuo/openjdk:17-alpine AS builder
 
+USER root:root
+
 WORKDIR /tmp
 
 ADD https://github.com/alibaba/Sentinel/releases/download/1.8.6/sentinel-dashboard-1.8.6.jar ./app.jar
