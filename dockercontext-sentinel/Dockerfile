@@ -7,7 +7,7 @@ WORKDIR /tmp
 ADD https://github.com/alibaba/Sentinel/releases/download/1.8.6/sentinel-dashboard-1.8.6.jar ./app.jar
 
 RUN java -Djarmode=layertools -jar /tmp/app.jar extract && \
-    rm -rf /tmp/dependencies/BOOT-INF/lib/java-boot-jarmode-layertools-*.jar && \
+    rm -rf /tmp/dependencies/BOOT-INF/lib/spring-boot-jarmode-layertools-*.jar && \
     rm -rf /tmp/application/BOOT-INF/*.idx && \
     rm -rf /tmp/application/META-INF/maven
 
